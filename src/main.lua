@@ -1,5 +1,5 @@
 -- TO DO
--- o ajout limite vitesse
+-- o align
 --
 -- **********************************
 -- Demo variables
@@ -11,8 +11,11 @@ W_HEIGHT = 600
 W_LIMIT = 50
 
 N_BOIDS = 100
-VISUAL_RANGE = 75
-V_TURN = 2 
+CVISUAL_RANGE = 75 -- could be an individual boid property
+VMAX = 100
+V_TURN = 2 -- could be an individual boid property
+AVOIDANCE = .1
+MINDISTANCE = 50
 
 -- boids table
 local boids = {}
@@ -25,20 +28,48 @@ boids.h = boids.img:getHeight()
 -- Fonctions
 -- *****************
 
+function distance(pBoid1, pBoid2) 
+
+  return math.sqrt((pBoid1.x - pBoid2.x)^2 + (pBoid1.y - pBoid2.y)^2)
+
+end
+
 -- Boids 
 function createBoid()
 
   local boid = {}
   boid.x = math.random(W_LIMIT, W_WIDTH - W_LIMIT) 
   boid.y = math.random(W_LIMIT, W_HEIGHT - W_LIMIT)
-  boid.vx = math.random(-100, 100)  
-  boid.vy = math.random(-100, 100) 
+  boid.vx = math.random(-VMAX, VMAX)  
+  boid.vy = math.random(-VMAX, VMAX) 
 
   return boid
 
 end
 
-function keepInside(pBoid, dt)
+function keepDistance(pBoid, pMinDistance, pAvoidance)
+
+  local dVx = 0
+  local dVy = 0
+  
+  for index, otherBoid in ipairs(boids.list) do
+    if pBoid ~= otherBoid then
+      if distance(otherBoid, pBoid) < pMinDistance then
+        dVx = dVx + (pBoid.x - otherBoid.x)
+        dVy = dVy + (pBoid.y - otherBoid.y)
+      end
+    end
+  end
+
+  pBoid.vx = pBoid.vx + dVx * pAvoidance
+  pBoid.vy = pBoid.vy + dVy * pAvoidance
+
+  return pBoid
+
+end
+
+
+function keepInside(pBoid)
 
   if pBoid.x < W_LIMIT then
     pBoid.vx = pBoid.vx + V_TURN 
@@ -95,8 +126,15 @@ function love.update(dt)
 
     -- cohesion()
     -- align()
-    -- keepDistance()
+    boid = keepDistance(boid, MINDISTANCE, AVOIDANCE)
     boid = keepInside(boid)
+
+    if math.abs(boid.vx) > VMAX then
+      boid.vx = boid.vx/boid.vx * VMAX
+    end
+    if math.abs(boid.vy) > VMAX then
+      boid.vy = boid.vy/boid.vy * VMAX
+    end
 
     boid.x = boid.x + boid.vx * dt
     boid.y = boid.y + boid.vy * dt

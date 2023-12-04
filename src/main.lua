@@ -1,5 +1,5 @@
 -- TO DO
--- o orienter la pointe du boid dans sa direction
+-- o ajout limite vitesse
 --
 -- **********************************
 -- Demo variables
@@ -10,9 +10,9 @@ W_WIDTH = 800
 W_HEIGHT = 600
 W_LIMIT = 50
 
-N_BOIDS = 1 
+N_BOIDS = 100
 VISUAL_RANGE = 75
-V_TURN = 0.8 
+V_TURN = 2 
 
 -- boids table
 local boids = {}
@@ -29,8 +29,8 @@ boids.h = boids.img:getHeight()
 function createBoid()
 
   local boid = {}
-  boid.x = math.random(W_WIDTH - boids.w) 
-  boid.y = math.random(W_HEIGHT - boids.h)
+  boid.x = math.random(W_LIMIT, W_WIDTH - W_LIMIT) 
+  boid.y = math.random(W_LIMIT, W_HEIGHT - W_LIMIT)
   boid.vx = math.random(-100, 100)  
   boid.vy = math.random(-100, 100) 
 
@@ -38,13 +38,13 @@ function createBoid()
 
 end
 
-function keepInside(pBoid)
+function keepInside(pBoid, dt)
 
   if pBoid.x < W_LIMIT then
     pBoid.vx = pBoid.vx + V_TURN 
   end
 
-  if pBoid.x > W_WIDTH - W_LIMIT - boids.w then
+  if pBoid.x > W_WIDTH - W_LIMIT then
     pBoid.vx = pBoid.vx - V_TURN
   end
 
@@ -52,7 +52,7 @@ function keepInside(pBoid)
     pBoid.vy = pBoid.vy + V_TURN
   end
 
-  if pBoid.y > W_HEIGHT - W_LIMIT - boids.h then
+  if pBoid.y > W_HEIGHT - W_LIMIT then
     pBoid. vy = pBoid.vy - V_TURN
   end
 
@@ -114,11 +114,8 @@ end
 function love.draw()
 
   for index, boid in ipairs(boids.list) do
-    love.graphics.draw(boids.img, boid.x, boid.y)
+    love.graphics.draw(boids.img, boid.x, boid.y, -math.atan2(boid.vx, boid.vy), 1, 1, boids.w/2, boids.h/2)
 
-    --debug
-    love.graphics.print(boid.x, 10, 10)
-    love.graphics.print(boid.y, 10, 30)
   end
 
 end

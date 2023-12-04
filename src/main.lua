@@ -88,6 +88,7 @@ function keepInside(pBoid)
   end
 
   return pBoid
+
 end
 
 -- ****************************
@@ -129,6 +130,7 @@ function love.update(dt)
     boid = keepDistance(boid, MINDISTANCE, AVOIDANCE)
     boid = keepInside(boid)
 
+    -- speed limitation
     if math.abs(boid.vx) > VMAX then
       boid.vx = boid.vx/boid.vx * VMAX
     end
@@ -136,6 +138,7 @@ function love.update(dt)
       boid.vy = boid.vy/boid.vy * VMAX
     end
 
+    -- move boid according to its speed
     boid.x = boid.x + boid.vx * dt
     boid.y = boid.y + boid.vy * dt
 
@@ -153,7 +156,6 @@ function love.draw()
 
   for index, boid in ipairs(boids.list) do
     love.graphics.draw(boids.img, boid.x, boid.y, -math.atan2(boid.vx, boid.vy), 1, 1, boids.w/2, boids.h/2)
-
   end
 
 end

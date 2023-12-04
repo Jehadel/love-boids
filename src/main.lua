@@ -142,8 +142,7 @@ function love.update(dt)
     boid.x = boid.x + boid.vx * dt
     boid.y = boid.y + boid.vy * dt
 
-
-end
+  end
 
 end
 

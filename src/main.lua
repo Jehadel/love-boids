@@ -61,33 +61,32 @@ function keepDistance(pBoid, pMinDistance, pAvoidance)
     end
   end
 
-  pBoid.vx = pBoid.vx + dVx * pAvoidance
-  pBoid.vy = pBoid.vy + dVy * pAvoidance
-
-  return pBoid
+  return {dVx * pAvoidance, dVy * pAvoidance}
 
 end
 
 
 function keepInside(pBoid)
+  local dVx = 0
+  local dVy = 0
 
   if pBoid.x < W_LIMIT then
-    pBoid.vx = pBoid.vx + V_TURN 
+    dVx = V_TURN 
   end
 
   if pBoid.x > W_WIDTH - W_LIMIT then
-    pBoid.vx = pBoid.vx - V_TURN
+    dVx = - V_TURN
   end
 
   if pBoid.y < W_LIMIT then
-    pBoid.vy = pBoid.vy + V_TURN
+    dVy = V_TURN
   end
 
   if pBoid.y > W_HEIGHT - W_LIMIT then
-    pBoid. vy = pBoid.vy - V_TURN
+    dVy = - V_TURN
   end
 
-  return pBoid
+  return {dVx, dVy}
 
 end
 
@@ -127,8 +126,17 @@ function love.update(dt)
 
     -- cohesion()
     -- align()
-    boid = keepDistance(boid, MINDISTANCE, AVOIDANCE)
-    boid = keepInside(boid)
+    -- boids avoid each other
+    avoidanceForce = keepDistance(boid, MINDISTANCE, AVOIDANCE)
+    -- boids return to the center when approching window’s edges
+    centeringForce = keepInside(boid)
+
+    -- boids speed adjustement according all forces
+    -- we could add ponderations
+    boid.vx = boid.vx + avoidanceForce[1] 
+                      + centeringForce[1]
+    boid.vy = boid.vy + avoidanceForce[2] 
+                      + centeringForce[2]
 
     -- speed limitation
     if math.abs(boid.vx) > VMAX then

@@ -8,7 +8,7 @@
 -- Constants
 W_WIDTH = 800
 W_HEIGHT = 600
-W_LIMIT = 80
+W_LIMIT = 40
 
 N_BOIDS = 80
 CVISUAL_RANGE = 60 -- could be an individual boid property
@@ -17,7 +17,7 @@ MINDISTANCE = 20
 VMAX = 100
 
 AVOIDANCE = 20 
-COHESION = 5 
+COHESION = 2 
 CENTERING = 200
 
 -- boids table

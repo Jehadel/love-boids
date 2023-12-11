@@ -12,6 +12,7 @@ W_LIMIT = 40
 
 N_BOIDS = 80
 CVISUAL_RANGE = 60 -- could be an individual boid property
+DEAD_ANGLE = 60
 V_TURN = 2 -- could be an individual boid property
 MINDISTANCE = 20
 VMAX = 100
@@ -34,6 +35,13 @@ boids.h = boids.img:getHeight()
 function distance(pBoid1, pBoid2) 
 
   return math.sqrt((pBoid1.x - pBoid2.x)^2 + (pBoid1.y - pBoid2.y)^2)
+
+end
+
+-- Determine if a boid is in the dead angle of the first boid 
+function deadAngle(pBoid1, pBoid2)
+
+  -- pBoid1 direction = -arctan(vx, vy)
 
 end
 
@@ -110,12 +118,13 @@ function keepInside(pBoid, pVTurn, pLimit)
   turn.dVx = 0
   turn.dVy = 0
 
+
   if pBoid.x < pLimit then
     turn.dVx = pVTurn
   end
 
   if pBoid.x > W_WIDTH - pLimit then
-    turn.dVx = - pVTurn 
+    turn.dVx = - pVTurn
   end
 
   if pBoid.y < pLimit then
@@ -187,10 +196,10 @@ function love.update(dt)
 
     -- speed limitation
     if math.abs(boid.vx) > VMAX then
-      boid.vx = boid.vx/boid.vx * VMAX
+      boid.vx = boid.vx/math.abs(boid.vx) * VMAX
     end
     if math.abs(boid.vy) > VMAX then
-      boid.vy = boid.vy/boid.vy * VMAX
+      boid.vy = boid.vy/math.abs(boid.vy) * VMAX
     end
 
     -- move boid according to its speed

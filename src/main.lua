@@ -17,9 +17,9 @@ V_TURN = 2 -- could be an individual boid property
 MINDISTANCE = 20
 VMAX = 100
 
-AVOIDANCE = 20 
+AVOIDANCE = 30 
 COHESION = 2 
-CENTERING = 200
+CENTERING = 270
 
 -- boids table
 local boids = {}
